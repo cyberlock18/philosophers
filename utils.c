@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 22:38:33 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/16 20:32:07 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/18 01:21:27 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,42 @@ size_t get_timestamp(t_data *data)
     gettimeofday(&time, NULL);
     timestamp = (time.tv_sec * 1000000) + time.tv_usec; // Convertimos a microsegundos
     return (timestamp - data->start_time);
+}
+void *monitor_routine(void *arg)
+{
+    t_data *data;
+    size_t i;
+
+    data = (t_data *)arg;
+    while (!data->end_time)
+    {
+        i = 0;
+        while (i < data->number_of_philosophers)
+        {
+            if (has_philo_died(&data->philos[i]))
+                return NULL;
+            i++;
+        }
+        usleep(1000); // Pequeña pausa para evitar consumo excesivo de CPU
+    }
+    return NULL;
+}
+void *monitor_routine(void *arg)
+{
+    t_data *data;
+    size_t i;
+
+    data = (t_data *)arg;
+    while (!data->end_time)
+    {
+        i = 0;
+        while (i < data->number_of_philosophers)
+        {
+            if (has_philo_died(&data->philos[i]))
+                return NULL;
+            i++;
+        }
+        usleep(1000); // Pequeña pausa para evitar consumo excesivo de CPU
+    }
+    return NULL;
 }
