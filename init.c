@@ -6,45 +6,50 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 21:33:02 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/13 23:55:12 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/24 22:16:55 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-void data_init(t_data *data)
+int data_init(t_data *data)
 {
 	size_t i;
 
 	i = 0;
-	data->end_time = false;
 	data->philos = malloc(sizeof(t_philo) * data->number_of_philosophers);
 	if (!data->philos)
-		return(printf("Error: memory allocation for forks failed\n"),free(data->forks));
+		return(printf("Error: memory allocation for forks failed\n"),free(data->forks),0);
 	data->forks = malloc(sizeof(t_fork) * data->number_of_philosophers);
 	if (!data->forks)
-		return(printf("Error: memory allocation for forks failed\n"),free(data->forks));	
+		return(printf("Error: memory allocation for forks failed\n"),free(data->forks),0);	
 	while(i < data->number_of_philosophers)
 	{
 		data->philos[i].id = i + 1;
 		data->philos[i].meals_counter = 0;
 		data->philos[i].is_eating = false;
-		data->philos[i].last_meal = 0;
 		data->philos[i].data = data;
 		data->philos[i].left_fork = &data->forks[i];
 		data->philos[i].right_fork = &data->forks[(i + 1) 
 			% data->number_of_philosophers];
+		data->philos[i].last_meal = data->start_time;
 		pthread_mutex_init(&data->forks[i].t_mtx, NULL);
+		if (pthread_mutex_init(&data->forks[i].t_mtx, NULL) != 0)
+			return(free(data->philos),free(data->forks), 0);
 		i++;
 	}
 	pthread_mutex_init(&data->print_mutex, NULL);
+	return(1);
 }
 void set_start_time(t_data *data)
 {
-	struct timeval time;
-
-	gettimeofday(&time, NULL);
-	data->start_time = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    data->start_time = 0;  // Convierte el tiempo a milisegundos
 }
+
+
+
+
 
 int create_philos_threads(t_data *data)
 {

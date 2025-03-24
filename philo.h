@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 20:10:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/16 20:08:56 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/24 21:42:21 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/time.h>
 # include <stdbool.h>
 # include <limits.h>
+# include <string.h>
 
 # define MAX 2147483647
 # define MIN -2147483648
@@ -37,15 +38,14 @@ typedef struct s_fork t_fork;
 
 typedef struct s_philo
 {
-	int id;
-	size_t meals_counter;
-	volatile bool is_eating;
+    int id;
+    size_t meals_counter;
+    volatile bool is_eating;
     size_t last_meal;
-	t_fork *left_fork;
-	t_fork *right_fork;
-	pthread_t id_thread;
-	t_data *data;
-	
+    t_fork *left_fork;
+    t_fork *right_fork;
+    pthread_t id_thread;
+    t_data *data;
 } t_philo;
 
 struct s_fork
@@ -68,15 +68,17 @@ struct s_data
 	pthread_mutex_t print_mutex;
 	
 };
-typedef struct s_timeval
+typedef struct s_time
 {
-    size_t tv_sec;  // Segundos en milisegundos
-    size_t tv_usec; // Microsegundos en milisegundos
-} t_timeval;
+    long int x;  // Microsegundos de la última medición (o alguna referencia temporal)
+    long int c;  // Segundos de la última medición (o alguna referencia temporal)
+    pthread_mutex_t lock;
+} t_time;
+
 
 void  	error_exit(const char *str);
 void *philo_routine(void *arg);
-void data_init(t_data *data);
+int data_init(t_data *data);
 void set_start_time(t_data *data);
 int create_philos_threads(t_data *data);
 int create_monitor_thread(t_data *data);
@@ -85,9 +87,11 @@ void philo_eat(t_philo *philo);
 void philo_sleep(t_philo *philo);
 void philo_think(t_philo *philo);
 int philo_take_forks(t_philo *philo);
-void philo_drop_forks(t_philo *philo);
-void monitor(t_data *data);
 void *monitor_routine(void *arg);
 size_t get_current_time(void);
-
+size_t get_timestamp(t_data *data);
+int has_phil_died(t_philo *philo);
+void valid_input(char **argv, t_data *data);
+void clean(t_data *data);
+int start_dinner(t_data *data);
 #endif
