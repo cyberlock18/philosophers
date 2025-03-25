@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 22:38:33 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/24 22:13:23 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:41:27 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,22 +103,21 @@ int has_phil_died(t_philo *philo)
     t_data *data;
 
     data = philo->data;
-    current = get_current_time() - data->start_time;  // Calcula la diferencia con el start_time
-
-    if (current - philo->last_meal >= data->time_to_die)  // Compara el tiempo de muerte
+    pthread_mutex_lock(&data->print_mutex);
+    current = get_current_time() - data->start_time;
+    if (current - philo->last_meal >= data->time_to_die)
     {
-        pthread_mutex_lock(&data->print_mutex);
         if (!data->end_time)
         {
-            printf("%zu %d died\n", current, philo->id);  // Imprime el tiempo en milisegundos
+            printf("%zu %d died\n", current, philo->id);
             data->end_time = true;
         }
         pthread_mutex_unlock(&data->print_mutex);
-        return 1;
+        return (1);
     }
-    return 0;
+    pthread_mutex_unlock(&data->print_mutex);
+    return (0);
 }
-
 
 
 

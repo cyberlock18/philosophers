@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:14:21 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/24 22:14:36 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:41:27 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,20 @@ size_t get_current_time(void)
 void philo_eat(t_philo *philo)
 {
     t_data *data;
-    size_t timestamp;
+    size_t current;
 
     data = philo->data;
-    philo->last_meal = get_current_time();  // Actualiza la última comida
-    timestamp = get_current_time() - data->start_time;  // Calcula el tiempo transcurrido en milisegundos
     pthread_mutex_lock(&data->print_mutex);
+    current = get_current_time() - data->start_time;
+    philo->last_meal = current;
     if (!data->end_time)
-        printf("%zu %d is eating\n", timestamp, philo->id);  // Imprime el tiempo en milisegundos
+        printf("%zu %d is eating\n", current, philo->id);
     pthread_mutex_unlock(&data->print_mutex);
     philo->meals_counter++;
-    usleep(data->time_to_eat * 1000);  // El tiempo de espera en milisegundos
+    usleep(data->time_to_eat * 1000);
     pthread_mutex_unlock(&philo->right_fork->t_mtx);
     pthread_mutex_unlock(&philo->left_fork->t_mtx);
 }
-
-
 
 void philo_sleep(t_philo *philo)
 {
@@ -68,27 +66,22 @@ void philo_think(t_philo *philo)
     pthread_mutex_unlock(&data->print_mutex);
 }
 
-
 int philo_take_forks(t_philo *philo)
 {
     t_data *data;
-    size_t timestamp;
+    size_t current;
 
     data = philo->data;
-
     if (data->end_time)
-        return 0;
-
+        return (0);
     pthread_mutex_lock(&philo->left_fork->t_mtx);
     pthread_mutex_lock(&philo->right_fork->t_mtx);
-
-    timestamp = get_current_time() - data->start_time;
     pthread_mutex_lock(&data->print_mutex);
+    current = get_current_time() - data->start_time;
     if (!data->end_time)
-        printf("%zu %d has taken both forks\n", timestamp, philo->id);
+        printf("%zu %d has taken both forks\n", current, philo->id);
     pthread_mutex_unlock(&data->print_mutex);
-
-    return (!data->end_time);
+    return (1);
 }
 
 

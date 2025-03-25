@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 21:33:02 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/24 22:16:55 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:45:31 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ void set_start_time(t_data *data)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    data->start_time = 0;  // Convierte el tiempo a milisegundos
+    data->start_time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    for (size_t i = 0; i < data->number_of_philosophers; i++)
+        data->philos[i].last_meal = data->start_time;
 }
 
 
