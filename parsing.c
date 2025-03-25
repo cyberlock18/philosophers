@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 23:25:14 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/24 22:09:46 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:22:28 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,4 @@ void valid_input(char **argv, t_data *data)
         data->nbr_limit_meals = -1;
 }
 
-
-void clean(t_data *data)
-{
-	free(data->philos);
-	free(data->forks);
-}
 

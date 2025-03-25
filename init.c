@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 21:33:02 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/25 20:45:31 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:21:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ int data_init(t_data *data)
 	i = 0;
 	data->philos = malloc(sizeof(t_philo) * data->number_of_philosophers);
 	if (!data->philos)
-		return(printf("Error: memory allocation for forks failed\n"),free(data->forks),0);
+		return(printf("Error: memory allocation for philosophers failed\n"),0);
 	data->forks = malloc(sizeof(t_fork) * data->number_of_philosophers);
 	if (!data->forks)
-		return(printf("Error: memory allocation for forks failed\n"),free(data->forks),0);	
+		return(printf("Error: memory allocation for forks failed\n"),free(data->philos),0);	
 	while(i < data->number_of_philosophers)
 	{
 		data->philos[i].id = i + 1;
@@ -32,7 +32,6 @@ int data_init(t_data *data)
 		data->philos[i].right_fork = &data->forks[(i + 1) 
 			% data->number_of_philosophers];
 		data->philos[i].last_meal = data->start_time;
-		pthread_mutex_init(&data->forks[i].t_mtx, NULL);
 		if (pthread_mutex_init(&data->forks[i].t_mtx, NULL) != 0)
 			return(free(data->philos),free(data->forks), 0);
 		i++;
@@ -43,15 +42,13 @@ int data_init(t_data *data)
 void set_start_time(t_data *data)
 {
     struct timeval tv;
+
     gettimeofday(&tv, NULL);
     data->start_time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    // Inicializar el tiempo de última comida como el tiempo de inicio
     for (size_t i = 0; i < data->number_of_philosophers; i++)
         data->philos[i].last_meal = data->start_time;
 }
-
-
-
-
 
 int create_philos_threads(t_data *data)
 {
@@ -68,21 +65,23 @@ int create_philos_threads(t_data *data)
 
 int create_monitor_thread(t_data *data)
 {
-	pthread_t monitor_thread;
-	if (pthread_create(&monitor_thread, NULL, monitor_routine, (void *)data))
-		return(printf("Error: pthread_create failed\n"), 1);
-	return(0);
+	if (pthread_create(&data->monitor_thread, NULL, monitor_routine, (void *)data))
+		return (printf("Error: pthread_create failed\n"), 1);
+	return (0);
 }
+
 int wait_for_threads(t_data *data)
 {
-	size_t i;
+    size_t i;
 
-	i = 0;
-	while(i < data->number_of_philosophers)
-	{
-		if(pthread_join(data->philos[i].id_thread, NULL))
-			return(printf("Error: pthread_join failed\n"), 1);
-		i++;
-	}
-	return(0);
+    i = 0;
+    while (i < data->number_of_philosophers)
+    {
+        if (pthread_join(data->philos[i].id_thread, NULL))
+            return (printf("Error: pthread_join failed\n"), 1);
+        i++;
+    }
+    if (pthread_join(data->monitor_thread, NULL))
+        return (printf("Error: monitor thread join failed\n"), 1);
+    return (0);
 }

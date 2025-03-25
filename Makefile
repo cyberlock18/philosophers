@@ -27,6 +27,7 @@ $(NAME): $(OBJ)
 	@printf "$(GREEN)Compilando $@...$(RESET)\n"
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 	@printf "$(GREEN)¡Philosophers compilado con éxito!$(RESET)\n"
+	
 
 %.o: %.c
 	@printf "$(GREEN)Compilando $<...$(RESET)\n"

@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 22:38:33 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/25 20:41:27 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 23:42:19 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,23 +59,6 @@ void *philo_routine(void *arg)
 
 
 
-
-
-
-
-
-/*size_t get_timestamp(t_data *data)
-{
-    struct timeval time;
-    size_t current_time;
-
-    gettimeofday(&time, NULL);
-    current_time = (time.tv_sec * 1000 + time.tv_usec) / 1000;  // Convertir a ms con mayor precisión
-    return (current_time - data->start_time);  // Devolver diferencia en ms
-}*/
-
-
-
 void *monitor_routine(void *arg)
 {
     t_data *data;
@@ -90,7 +73,7 @@ void *monitor_routine(void *arg)
             if (has_phil_died(&data->philos[i]))
                 return NULL;
             i++;
-            usleep(100);  // Verificar más frecuentemente
+            usleep(500);  // Revisar más frecuentemente (cada 0.5ms)
         }
     }
     return NULL;
@@ -100,16 +83,19 @@ void *monitor_routine(void *arg)
 int has_phil_died(t_philo *philo)
 {
     size_t current;
+    size_t elapsed;
     t_data *data;
 
     data = philo->data;
     pthread_mutex_lock(&data->print_mutex);
-    current = get_current_time() - data->start_time;
-    if (current - philo->last_meal >= data->time_to_die)
+    current = get_current_time();
+    elapsed = current - philo->last_meal;
+    
+    if (elapsed >= data->time_to_die)
     {
         if (!data->end_time)
         {
-            printf("%zu %d died\n", current, philo->id);
+            printf(MAG"%zu %d died\n", current - data->start_time, philo->id);
             data->end_time = true;
         }
         pthread_mutex_unlock(&data->print_mutex);
@@ -117,6 +103,21 @@ int has_phil_died(t_philo *philo)
     }
     pthread_mutex_unlock(&data->print_mutex);
     return (0);
+}
+
+void	clean(t_data *data)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < data->number_of_philosophers)
+	{
+		pthread_mutex_destroy(&data->forks[i].t_mtx);
+		i++;
+	}
+	pthread_mutex_destroy(&data->print_mutex);
+	free(data->philos);
+	free(data->forks);
 }
 
 

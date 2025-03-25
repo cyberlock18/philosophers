@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 20:10:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/03/24 21:42:21 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/03/25 21:21:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ struct s_data
 	bool end_time;
 	t_fork *forks;
 	t_philo *philos;
+	pthread_t monitor_thread;
 	pthread_mutex_t print_mutex;
 	
 };
