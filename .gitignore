@@ -2,6 +2,7 @@
 *.a
 *.out
 *Zone*
-
+.gitignore
+philo
 .vscode/
 minilibx-linux/
