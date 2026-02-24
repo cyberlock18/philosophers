@@ -1,75 +1,67 @@
 # Philosophers
 
-A simulation of the classic **Dining Philosophers** concurrency problem, implemented in C using POSIX threads (`pthreads`) and mutexes.
+A simulation of the classic **Dining Philosophers Problem** built as part of the 42 school curriculum. The program models `N` philosophers sitting at a round table, each alternating between eating, sleeping, and thinking. The challenge is to avoid **deadlocks** and **data races** while ensuring no philosopher starves.
 
-## Project Summary
+---
 
-Each philosopher sits at a round table. There is a fork between each pair of adjacent philosophers. To eat, a philosopher must pick up both the fork to their left and the fork to their right. The program simulates this scenario concurrently, avoiding deadlocks and data races, and detects when a philosopher dies of starvation.
+## What You Learn
 
-## Skills Acquired
+- **POSIX threads (`pthreads`)** – creating and joining threads with `pthread_create` / `pthread_join`.
+- **Mutexes** – protecting shared resources (forks, print output, simulation state) using `pthread_mutex_lock` / `pthread_mutex_unlock`.
+- **Concurrency & synchronization** – reasoning about race conditions, deadlocks, and thread-safe design.
+- **Precise timing** – measuring elapsed time with `gettimeofday` and implementing sub-millisecond sleeps.
+- **Resource management** – allocating and cleanly freeing heap memory and destroying mutex objects.
+- **Argument parsing & validation** – converting and range-checking command-line integers robustly.
 
-- Working with POSIX threads (`pthread_create`, `pthread_join`)
-- Synchronisation with mutexes (`pthread_mutex_lock`, `pthread_mutex_unlock`)
-- Detecting and preventing deadlocks and race conditions
-- Precise timing with `gettimeofday`
-- Memory management and structured data design in C
-- Argument validation and defensive programming
+---
 
-## Build & Run
-
-**Requirements:** a C compiler (`cc`) and a POSIX-compliant OS (Linux / macOS).
+## Build
 
 ```bash
-# Build
-make
-
-# Clean object files
-make clean
-
-# Remove binary and object files
-make fclean
-
-# Rebuild from scratch
-make re
+make        # compile → produces the 'philo' binary
+make clean  # remove object files
+make fclean # remove object files and the binary
+make re     # fclean + all
 ```
 
-### Usage
+Requires a C compiler (`cc`) and a POSIX-compliant system with `pthread` support.
+
+---
+
+## Usage
 
 ```
-./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
+./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]
 ```
 
 | Argument | Description |
 |---|---|
-| `number_of_philosophers` | Number of philosophers (and forks). Must be between 2 and 200. |
-| `time_to_die` | Time in ms before a philosopher dies if they haven't started eating. Must be ≥ 60. |
-| `time_to_eat` | Time in ms a philosopher takes to eat. Must be ≥ 60. |
-| `time_to_sleep` | Time in ms a philosopher sleeps after eating. Must be ≥ 60. |
-| `number_of_times_each_philosopher_must_eat` | *(Optional)* Simulation stops when all philosophers have eaten this many times. |
+| `number_of_philosophers` | Number of philosophers (and forks). Must be between **2** and **200**. |
+| `time_to_die` | Time in **milliseconds** before a philosopher who hasn't started eating dies. Must be ≥ 60. |
+| `time_to_eat` | Time in **milliseconds** a philosopher takes to eat. Must be ≥ 60. |
+| `time_to_sleep` | Time in **milliseconds** a philosopher spends sleeping. Must be ≥ 60. |
+| `number_of_times_each_philosopher_must_eat` | *(Optional)* Simulation ends once every philosopher has eaten this many times. |
 
-**Examples:**
+### Examples
 
 ```bash
-# 5 philosophers, die at 800ms, eat for 200ms, sleep for 200ms
+# 5 philosophers, die after 800 ms, eat for 200 ms, sleep for 200 ms
 ./philo 5 800 200 200
 
-# Same, but stop after each philosopher has eaten 7 times
+# Same scenario, stop after each philosopher has eaten 7 times
 ./philo 5 800 200 200 7
 ```
 
+---
+
 ## Project Structure
 
-```
-philosophers/
-├── main.c       – Entry point; starts the dinner simulation
-├── init.c       – Data and mutex initialisation
-├── parsing.c    – Argument validation and parsing
-├── process.c    – Philosopher and monitor thread routines
-├── utils.c      – Utility functions (timing, printing, cleanup)
-├── philo.h      – Header: structs, macros, function prototypes
-└── Makefile
-```
-
-## Author
-
-**ruortiz-**
+| File | Purpose |
+|---|---|
+| `main.c` | Entry point – validates arguments, initializes data, and starts the simulation. |
+| `init.c` | Allocates and initializes philosopher structs, forks, and mutexes. |
+| `parsing.c` | Parses and validates command-line arguments. |
+| `process.c` | Philosopher lifecycle (eat / sleep / think) and thread routines. |
+| `utils.c` | Helper utilities: timing, printing, and clean-up. |
+| `philo.h` | Shared header – structs, macros, and function prototypes. |
+| `Makefile` | Build rules. |
